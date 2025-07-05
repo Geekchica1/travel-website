@@ -1,461 +1,139 @@
-import React, { useState, useEffect } from 'react';
-import { Heart, Utensils, Landmark, Camera, Castle, MapPin, Info, Smile, Sparkles, BookOpen, Crown, Car, Train, Bus, Bike, Sun, Moon, Coffee, ShoppingBag, Palette, Music, Wine, Croissant, Grape, BellRing, TreePine, Ship, FerrisWheel, Lightbulb, Star, Handshake, Scroll, Building, BusFront, Plane, CarTaxi, Wheat, Factory, Store, Flower, IceCream, Cake, GlassWater, Leaf, Globe, Ticket } from 'lucide-react';
-
-// Define the activity data based on the user's detailed itinerary
-const activitiesData = [
-  {
-    day: 1,
-    date: 'Thursday, July 17',
-    options: [
-      {
-        id: 'd1o1',
-        name: 'Lunch: Baguette Tradition from Bakery Utopie',
-        description: 'Grab a classic Baguette Tradition from a local boulangerie like Bakery Utopie. A simple, delicious, and crowd-free lunch to start your Parisian adventure! 🥖',
-        icon: Utensils, // Changed from Baguette
-        type: 'food',
-        tips: 'Look for the "Boulangerie" sign. Many boulangeries close in the afternoon, so get it before lunch. Enjoy it in a nearby park for a true Parisian experience.',
-        selfie: 'A joyful selfie holding your fresh baguette, perhaps with a charming Parisian street in the background. Don\'t forget to take a bite! 😋'
-      },
-      {
-        id: 'd1o5', // New activity ID
-        name: 'Snack: Black Baguette with Truffle Brie at Maison Bergeron',
-        description: 'Indulge in a unique Parisian treat: the Black Baguette with Truffle Brie from Maison Bergeron. A gourmet experience for cheese and bread lovers! 🖤🧀🥖',
-        icon: Utensils,
-        type: 'food',
-        tips: 'Maison Bergeron is known for its high-quality cheeses and specialty breads. This is a perfect savory snack or light lunch. Ask for recommendations if you want to try other unique items!',
-        selfie: 'A sophisticated selfie with your black baguette, showing off the unique color, perhaps with a subtle Parisian backdrop. Get that gourmet shot! 📸'
-      },
-      {
-        id: 'd1o2',
-        name: 'Afternoon: Musée Carnavalet (Paris History)',
-        description: 'Explore the spectacular Musée Carnavalet, the museum of Paris history, recently reopened after a major facelift. A less-crowded dive into the city\'s past, housed in two beautiful mansions. 🏛️📜',
-        icon: Landmark, // Changed from Museum
-        type: 'museum',
-        tips: 'Entry is free for permanent collections. Check their website for temporary exhibitions which might require booking. Allow at least 2-3 hours to explore thoroughly.',
-        selfie: 'A thoughtful pose in one of the beautifully restored period rooms, or with a historical artifact (no flash!). Capture the elegance of old Paris. ✨'
-      },
-      {
-        id: 'd1o3',
-        name: 'Afternoon: Musée des Archives Nationales',
-        description: 'Discover the Musée des Archives Nationales, featuring Napoleon’s handwritten testament and Marie Antoinette’s letter. Offers a "central Paris answer to Versailles" without the crowds. 👑✍️',
-        icon: Scroll,
-        type: 'museum',
-        tips: 'Focus on the historical documents and the impressive architecture of the building itself. It\'s a quiet and contemplative space.',
-        selfie: 'A dramatic shot next to a grand archway or a historic document display (from a respectful distance, no flash!). Feel the weight of history! 🕰️'
-      },
-      {
-        id: 'd1o4',
-        name: 'Dinner: Authentic Falafel at L\'as du Fallafel (Le Marais)',
-        description: 'Experience authentic falafel at L\'as du Fallafel in Le Marais. Be prepared for a line, but it’s a popular local spot and a quintessential Parisian street food experience worth the wait! 🥙',
-        icon: Utensils,
-        type: 'food',
-        tips: 'Go for the full sandwich with all the toppings – it\'s a messy but delicious experience! Consider getting it to-go and finding a spot in Place des Vosges nearby.',
-        selfie: 'A candid shot with a falafel pita in hand, smiling amidst the charming Marais streets. Capture the vibrant energy! 🥳'
-      },
-    ],
-  },
-  {
-    day: 2,
-    date: 'Friday, July 18',
-    options: [
-      {
-        id: 'd2o1',
-        name: 'Morning/Evening: Louvre Museum (Strategic Visit)',
-        description: 'Visit the iconic Louvre Museum. Aim for a late morning (after 11 AM) or late afternoon/evening visit (Fridays have late openings until 9:45 PM) to avoid peak crowds. Book time-entry tickets well in advance! 🖼️🎨',
-        icon: Landmark, // Changed from Museum
-        type: 'museum',
-        tips: 'Focus on key masterpieces like the Mona Lisa and Venus de Milo. Don\'t try to see everything; it\'s impossible in one visit. Use a map to navigate directly to your desired sections.',
-        selfie: 'A classic selfie with the Louvre Pyramid in the background, or a subtle shot near a less crowded masterpiece. Be respectful of other visitors! 🤳'
-      },
-      {
-        id: 'd2o2',
-        name: 'Lunch: Local Bistro near Louvre (e.g., Louise Café)',
-        description: 'Find a local bistro a few blocks away from the Louvre, such as Louise Café, for an authentic Parisian lunch experience away from tourist traps. 🍽️🇫🇷',
-        icon: Utensils,
-        type: 'food',
-        tips: 'Look for "plat du jour" (dish of the day) for a good value meal. Remember to say "Bonjour" when entering and "Merci" when leaving. Tipping is appreciated but not mandatory.',
-        selfie: 'A charming photo outside a quaint Parisian bistro, or a shot of your delicious French meal. Capture the cozy ambiance! ✨'
-      },
-      {
-        id: 'd2o3',
-        name: 'Afternoon: Arc de Triomphe Rooftop Views',
-        description: 'Stroll through the Tuileries Garden, then head to the Arc de Triomphe. Its rooftop offers "insane rooftop views" that include the Eiffel Tower, avoiding the Eiffel Tower crowds. 🌟🇫🇷',
-        icon: Landmark,
-        type: 'attraction',
-        tips: 'Book Arc de Triomphe tickets online in advance to skip lines. Use the underground passage to reach it safely. Go at sunset for spectacular views!',
-        selfie: 'A triumphant selfie from the top of the Arc de Triomphe with the Champs-Élysées stretching out behind you. Capture the grandeur! 📸'
-      },
-      {
-        id: 'd2o4',
-        name: 'Afternoon: Montparnasse Tower Panoramic Observation Deck',
-        description: 'For excellent Eiffel Tower views without the crowds, visit the Montparnasse Tower Panoramic Observation Deck. A great alternative for stunning cityscapes and a less crowded experience! 🏙️🔭',
-        icon: Camera,
-        type: 'attraction',
-        tips: 'Go at sunset for spectacular golden hour views. It\'s often much less crowded than the Eiffel Tower itself and offers a unique perspective of Paris.',
-        selfie: 'A panoramic selfie with the entire Paris skyline, including the Eiffel Tower, in the background. Get the whole city in your shot! 🌆'
-      },
-      {
-        id: 'd2o5',
-        name: 'Treat: French Hot Chocolate from Angelina Paris (Takeaway)',
-        description: 'Indulge in a rich French Hot Chocolate from Angelina Paris. To avoid crowds and higher prices, opt for a takeaway and savor it while walking through the Tuileries Garden. ☕🍫',
-        icon: Coffee,
-        type: 'food',
-        tips: 'The hot chocolate is incredibly rich; a small one might be enough! Pair it with a Mont Blanc pastry if you\'re feeling indulgent. It\'s a true Parisian delight.',
-        selfie: 'A cozy selfie sipping your hot chocolate with a blurred Parisian background. Capture the moment of sweet indulgence! 😌'
-      },
-      {
-        id: 'd2o6',
-        name: 'Dinner: Traditional French Meal at Chez Savy',
-        description: 'Enjoy a traditional French meal at Chez Savy, a classic bistro offering an authentic Parisian dining experience away from the main tourist hubs. 🍽️🍷',
-        icon: Utensils,
-        type: 'food',
-        tips: 'Make a reservation, especially on a Friday evening. Try their traditional French dishes and ask for wine recommendations. Embrace the slow dining experience.',
-        selfie: 'A sophisticated photo at your table, capturing the ambiance of a classic Parisian bistro. Show off your delicious French cuisine! ✨'
-      },
-    ],
-  },
-  {
-    day: 3,
-    date: 'Saturday, July 19',
-    options: [
-      {
-        id: 'd3o1',
-        name: 'Morning: Montmartre Food Tour & Sacré-Cœur',
-        description: 'Get an early start to explore Montmartre. Join a food tour to taste pastries, bread, chocolate, and cheese with an expert guide, ensuring an authentic culinary experience while exploring the neighborhood. Visit the Sacré-Cœur Basilica for incredible city views. 🥐🧀🥖',
-        icon: Utensils, // Changed from Baguette
-        type: 'food',
-        tips: 'Book the food tour in advance. Climb to the top of Sacré-Cœur for panoramic views (small fee). Wear comfortable shoes for walking the hilly streets.',
-        selfie: 'A joyful group selfie with your food tour guide and delicious treats, or a panoramic shot from Sacré-Cœur with Paris sprawling behind you. Capture the bohemian spirit! 📸'
-      },
-      {
-        id: 'd3o2',
-        name: 'Afternoon: Musée des Arts Forains (Fairground Museum)',
-        description: 'Discover the Musée des Arts Forains, a unique fairground museum featured in "Midnight in Paris." It offers a whimsical, less-crowded experience filled with antique carousels and games. 🎠🎪',
-        icon: FerrisWheel,
-        type: 'museum',
-        tips: 'Advance online bookings are essential as it\'s often by guided tour. It\'s a truly magical and interactive place, unlike traditional museums!',
-        selfie: 'A playful selfie with one of the antique carousel horses or fairground attractions. Embrace the whimsical atmosphere! 🤡'
-      },
-      {
-        id: 'd3o3',
-        name: 'Late Afternoon: Savory or Sweet Crepe',
-        description: 'Try a Savory Crepe (such as feta with salad, onions, and tomatoes) from Au P’tit Grec (often cash-only) or a simple Sweet Crepe from a creperie like Breizh Café or La Crêperie de Josselin. Look for places with plenty of French speakers! 🥞🍓',
-        icon: Croissant,
-        type: 'food',
-        tips: 'Au P\'tit Grec is known for generous portions. Sweet crepes are perfect for an afternoon pick-me-up. Enjoy it while strolling the streets!',
-        selfie: 'A happy selfie holding your delicious crepe, perhaps with a charming Parisian street in the background. Show off your tasty treat! 😋'
-      },
-      {
-        id: 'd3o4',
-        name: 'Dinner: Vegetarian/Vegan-Friendly Restaurant (Montmartre/Pigalle)',
-        description: 'Explore the Montmartre/Pigalle area, noted for its increasing number of vegetarian and vegan-friendly restaurants. Find a delicious plant-based meal in this vibrant neighborhood! 🥗🌱',
-        icon: Leaf,
-        type: 'food',
-        tips: 'Use Google Maps to find highly-rated vegetarian/vegan spots in the area. Don\'t be afraid to ask "Avez-vous des plats végétariens?" (Do you have vegetarian dishes?).',
-        selfie: 'A vibrant photo of your colorful vegetarian dish, or a cozy shot inside a charming local restaurant. Celebrate your healthy and delicious choice! 🍽️'
-      },
-    ],
-  },
-  {
-    day: 4,
-    date: 'Sunday, July 20',
-    options: [
-      {
-        id: 'd4o1',
-        name: 'Morning: Day Trip to Chateau Chantilly',
-        description: 'Instead of the often "overrun" Palace of Versailles, take a day trip to Chateau Chantilly. It is less visited and features Europe’s biggest horse stables and newly restored apartments, offering a rich historical experience without the peak tourist throngs. 🏰🐎',
-        icon: Castle,
-        type: 'palace',
-        tips: 'Allow ample travel time (around 1 hour 30 minutes each way by train). Check train schedules in advance. Enjoy lunch near the château or pack a picnic.',
-        selfie: 'A majestic selfie in front of the château, or a fun shot with the horses at the stables. Capture your royal escape! 👑🐴'
-      },
-      {
-        id: 'd4o2',
-        name: 'Afternoon: Raspail Market (Organic)',
-        description: 'Immerse yourself in a local Parisian market. On Sundays, visit the Raspail Market, which is certified organic and offers a fantastic way to sample diverse local produce, cheeses, and baked goods. 🍎🧀🍇',
-        icon: ShoppingBag, // Changed from Cheese, now uses ShoppingBag for market
-        type: 'attraction',
-        tips: 'Go hungry! It\'s a great place to pick up picnic supplies. Be polite and ask before touching produce. Cash is often preferred by vendors.',
-        selfie: 'A vibrant photo amidst colorful market stalls, or a happy shot with your market finds. Capture the authentic Parisian street life! 🛍️'
-      },
-      {
-        id: 'd4o3',
-        name: 'Afternoon: Rue de Grenelle Market (with Antiques)',
-        description: 'Explore the Rue de Grenelle Market, which on Sundays also features an antiques section. A fantastic way to sample diverse local produce and perhaps find a unique souvenir! 🏺🍓',
-        icon: Store,
-        type: 'attraction',
-        tips: 'Practice your French phrases with vendors. It\'s a great place for people-watching and discovering hidden treasures. Be ready to haggle gently for antiques!',
-        selfie: 'A candid shot browsing the market, or a fun photo with a quirky antique find. Show off your discovery! 🕰️'
-      },
-      {
-        id: 'd4o4',
-        name: 'Dinner: Market Finds Picnic or Vegetarian Quiche',
-        description: 'Enjoy a casual dinner using your market finds for a picnic in a park (like Parc Montsouris or Buttes Chaumont). Alternatively, explore a dedicated vegetarian restaurant or try a vegetarian quiche from Boulangerie LIBERTÉ. 🧺🥗',
-        icon: Grape, // Changed from Cheese
-        type: 'food',
-        tips: 'Check park closing times. For cheese, inquire about rennet for vegetarian options: "Est-ce que ce fromage est végétarien?" (Is this cheese vegetarian?).',
-        selfie: 'A cozy picnic selfie in a beautiful Parisian park, or a delicious shot of your vegetarian meal. Embrace the relaxed evening! 🌳😋'
-      },
-    ],
-  },
-  {
-    day: 5,
-    date: 'Monday, July 21',
-    options: [
-      {
-        id: 'd5o1',
-        name: 'Morning: Ateliers des Lumières (Immersive Digital Art)',
-        description: 'Visit the Ateliers des Lumières, an immersive digital art museum. This is a very popular spot, so advance online bookings are essential to ensure entry and minimize wait times. A truly unique art experience! 🎨✨',
-        icon: Sparkles,
-        type: 'museum',
-        tips: 'Book tickets well in advance, especially for popular exhibitions. Arrive a bit early to enjoy the full experience. The projections are stunning!',
-        selfie: 'A dynamic, artistic selfie with the projections all around you, creating a unique visual effect. Get creative with your angles! 📸'
-      },
-      {
-        id: 'd5o2',
-        name: 'Lunch: Veggie Burger from Dumbo',
-        description: 'Grab a delicious Veggie Burger from Dumbo (the Petites-Écuries location is recommended for onsite dining, or take it to the Canal Saint-Martin for a scenic lunch). 🍔🍟',
-        icon: Utensils,
-        type: 'food',
-        tips: 'Dumbo is known for its smash burgers, and their veggie option is highly rated. Perfect for a quick, satisfying meal before your departure.',
-        selfie: 'A happy selfie with your gourmet veggie burger, perhaps by the Canal Saint-Martin. Capture the modern Parisian food scene! 運河 😋'
-      },
-      {
-        id: 'd5o3',
-        name: 'Lunch: Kebab from Impact Berliner Kebap',
-        description: 'Try a Kebab from Impact Berliner Kebap, offering halloumi döner kebab or a vegan seitan version. A popular and tasty street food option for a quick and flavorful lunch! 🥙',
-        icon: Utensils,
-        type: 'food',
-        tips: 'Known for generous portions and fresh ingredients. A great option if you\'re looking for something quick and delicious on the go.',
-        selfie: 'A candid shot enjoying your kebab on the go, with a bustling Parisian street in the background. Show off your street food find! 🚶‍♀️'
-      },
-      {
-        id: 'd5o4',
-        name: 'Afternoon: Deyrolle (Taxidermy Shop/Museum)',
-        description: 'Explore Deyrolle, a fascinating taxidermy shop that doubles as a museum and appears in "Midnight in Paris." A truly curious cultural experience! 🦋🦁',
-        icon: BookOpen,
-        type: 'attraction',
-        tips: 'It\'s a working shop, so be respectful. The displays are incredibly detailed and artistic. It\'s a unique glimpse into a bygone era.',
-        selfie: 'A whimsical selfie with one of the grand taxidermy animals (from a respectful distance, no touching!). Capture the quirky charm! 🦒'
-      },
-      {
-        id: 'd5o5',
-        name: 'Afternoon: Musée de l\'Éventail (Fan Museum)',
-        description: 'Visit the charming Musée de l\'Éventail, a fan museum that also functions as an atelier. Discover the history and artistry of hand fans. 🌬️🌸',
-        icon: Palette,
-        type: 'museum',
-        tips: 'It\'s a small, intimate museum, perfect for a quick and unique visit. Check opening hours as they can be limited. A hidden gem for art and history lovers.',
-        selfie: 'A graceful pose holding an imaginary fan, or a close-up with a beautiful fan display. Embrace the elegance! 💃'
-      },
-      {
-        id: 'd5o6',
-        name: 'Afternoon: Musée Nissim de Camondo (House Museum)',
-        description: 'The Musée Nissim de Camondo is a visually stunning house museum that showcases 18th-century decorative art. Step back in time in this elegant Parisian mansion. 🏡🎨',
-        icon: Building,
-        type: 'museum',
-        tips: 'It\'s located near Parc Monceau, which is also lovely for a stroll. The attention to detail in the interiors is exquisite. A peaceful and luxurious escape.',
-        selfie: 'A sophisticated selfie in one of the opulent rooms, capturing the historical ambiance. Feel like you\'ve stepped into a period drama! ✨'
-      },
-      {
-        id: 'd5o7',
-        name: 'Treat: Madeleines from Le Comptoir de Madeleine',
-        description: 'Indulge in delicate Madeleines from Le Comptoir de Madeleine. A perfect sweet treat before your departure! 🍋🍰',
-        icon: Cake,
-        type: 'food',
-        tips: 'Try different flavors! They are best enjoyed fresh. Grab a few for your journey home or as gifts.',
-        selfie: 'A happy selfie with a box of freshly baked madeleines, or taking a bite of one. Show off your sweet tooth! 😋'
-      },
-      {
-        id: 'd5o8',
-        name: 'Treat: Cream Puffs from Popelini',
-        description: 'Savor exquisite Cream Puffs from Popelini. These choux pastries filled with delicious cream are a delightful Parisian indulgence! 🧁🍓',
-        icon: IceCream,
-        type: 'food',
-        tips: 'Popelini offers a variety of creative flavors. Pick a few to try! They are light, airy, and incredibly delicious.',
-        selfie: 'A joyful selfie with a colorful selection of cream puffs, or a close-up of a perfectly piped choux. Capture the joy of a perfect pastry! 🤩'
-      },
-    ],
-  },
-];
-
-const App = () => {
-  const [selectedActivities, setSelectedActivities] = useState([]);
-  const [activeTab, setActiveTab] = useState('plan'); // 'plan' or 'itinerary'
-
-  // Function to toggle activity selection
-  const toggleActivity = (activity) => {
-    setSelectedActivities((prevSelected) => {
-      if (prevSelected.some((a) => a.id === activity.id)) {
-        // If already selected, remove it
-        return prevSelected.filter((a) => a.id !== activity.id);
-      } else {
-        // If not selected, add it
-        return [...prevSelected, activity];
-      }
-    });
-  };
-
-  // Component for an individual activity card
-  const ActivityCard = ({ activity, onToggle, isSelected }) => {
-    const IconComponent = activity.icon; // Get the Lucide React icon component
-
-    return (
-      <div className="bg-white rounded-xl shadow-lg p-6 flex flex-col justify-between h-full transform transition-transform duration-300 hover:scale-105 hover:shadow-xl border border-pink-100">
-        <div>
-          <div className="flex items-center mb-4">
-            {IconComponent && <IconComponent className="text-pink-500 mr-3 w-8 h-8 flex-shrink-0" />}
-            <h3 className="text-xl font-semibold text-gray-800 leading-tight">{activity.name}</h3>
-          </div>
-          <p className="text-gray-600 mb-4 text-sm leading-relaxed">
-            {activity.description}
-            <br /><br />
-            <span className="font-medium text-gray-700 flex items-center mb-1"><Info className="w-4 h-4 mr-1 text-blue-500" /> Tips:</span> {activity.tips}
-            <br />
-            <span className="font-medium text-gray-700 flex items-center mt-2 mb-1"><Camera className="w-4 h-4 mr-1 text-purple-500" /> Selfie Suggestion:</span> {activity.selfie}
-          </p>
-        </div>
-        <button
-          onClick={() => onToggle(activity)}
-          className={`mt-auto flex items-center justify-center px-4 py-2 rounded-full transition-colors duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 ${
-            isSelected
-              ? 'bg-red-500 text-white hover:bg-red-600 shadow-md'
-              : 'bg-pink-100 text-pink-600 hover:bg-pink-200 shadow-sm'
-          }`}
-        >
-          <Heart className={`w-5 h-5 mr-2 ${isSelected ? 'fill-current' : ''}`} />
-          {isSelected ? 'Added to Itinerary!' : 'Add to Itinerary'}
-        </button>
-      </div>
-    );
-  };
-
-  // Component for displaying a single day's planning options
-  const DayPlanner = ({ dayData, selectedActivities, onToggle }) => {
-    return (
-      <div className="mb-12">
-        <h2 className="text-3xl font-bold text-gray-800 mb-6 flex items-center">
-          <Sun className="w-7 h-7 mr-3 text-yellow-500" /> Day {dayData.day}: {dayData.date}
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {dayData.options.map((activity) => (
-            <ActivityCard
-              key={activity.id}
-              activity={activity}
-              onToggle={onToggle}
-              isSelected={selectedActivities.some((a) => a.id === activity.id)}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  // Component for displaying the built itinerary
-  const ItineraryDisplay = ({ selectedActivities }) => {
-    // If no activities are selected, show a friendly message
-    if (selectedActivities.length === 0) {
-      return (
-        <div className="text-center py-12 bg-white rounded-xl shadow-lg">
-          <Sparkles className="w-16 h-16 text-pink-400 mx-auto mb-4 animate-bounce" />
-          <p className="text-xl text-gray-600 font-medium">Your itinerary is empty! Start adding activities from the "Plan Your Trip" tab. ✨</p>
-          <p className="text-md text-gray-500 mt-2">Click the ❤️ button on any activity to add it here and build your dream Paris trip!</p>
-        </div>
-      );
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Travel Adventures</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #fdfdfd;
+      color: #333;
+      line-height: 1.6;
     }
+    header {
+      background: url('https://source.unsplash.com/1600x500/?travel') center/cover no-repeat;
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+    }
+    header h1 {
+      font-size: 3rem;
+      margin: 0;
+    }
+    nav {
+      background: #004d40;
+      display: flex;
+      justify-content: center;
+      padding: 0.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 0 1rem;
+      font-weight: bold;
+      transition: color 0.3s ease;
+    }
+    nav a:hover {
+      color: #ffd600;
+    }
+    section {
+      padding: 2rem;
+      max-width: 800px;
+      margin: auto;
+    }
+    section h2 {
+      border-bottom: 2px solid #ccc;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+    .collapsible {
+      background-color: #e0f2f1;
+      color: #004d40;
+      cursor: pointer;
+      padding: 1rem;
+      border: none;
+      text-align: left;
+      outline: none;
+      font-size: 1.1rem;
+      margin: 1rem 0;
+    }
+    .content {
+      padding: 0 1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      background: #f1f1f1;
+    }
+    footer {
+      background: #004d40;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Explore the World</h1>
+    <p>Your journey starts here</p>
+  </header>
 
-    // Group activities by day and sort them by their original order (implied by ID)
-    const groupedItinerary = activitiesData.map(day => ({
-      day: day.day,
-      date: day.date,
-      activities: selectedActivities
-        .filter(activity => activity.id.startsWith(`d${day.day}o`))
-        .sort((a, b) => a.id.localeCompare(b.id)) // Sort by ID to maintain original order
-    })).filter(day => day.activities.length > 0); // Only include days with selected activities
+  <nav>
+    <a href="#intro">Intro</a>
+    <a href="#destinations">Destinations</a>
+    <a href="#tips">Travel Tips</a>
+  </nav>
 
-    return (
-      <div className="bg-white rounded-xl shadow-lg p-8">
-        <h2 className="text-4xl font-extrabold text-pink-600 mb-8 text-center flex items-center justify-center">
-          <MapPin className="w-10 h-10 mr-4 text-pink-500 animate-pulse" /> Your Paris Itinerary! <Smile className="ml-3 text-yellow-500" />
-        </h2>
-        {groupedItinerary.map((dayGroup) => (
-          <div key={dayGroup.day} className="mb-10 p-6 bg-pink-50 rounded-lg shadow-md border border-pink-100">
-            <h3 className="text-2xl font-bold text-pink-700 mb-5 flex items-center">
-              <Sun className="w-6 h-6 mr-2 text-yellow-600" /> Day {dayGroup.day}: {dayGroup.date}
-            </h3>
-            <ul className="space-y-4">
-              {dayGroup.activities.map((activity) => {
-                const IconComponent = activity.icon;
-                return (
-                  <li key={activity.id} className="flex items-start bg-white p-4 rounded-lg shadow-sm border border-pink-100 transform transition-transform duration-200 hover:scale-[1.01]">
-                    {IconComponent && <IconComponent className="text-pink-500 mr-4 mt-1 w-6 h-6 flex-shrink-0" />}
-                    <div>
-                      <p className="text-lg font-semibold text-gray-800">{activity.name}</p>
-                      <p className="text-gray-600 text-sm mt-1">{activity.description}</p>
-                    </div>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-        <div className="mt-10 text-center text-gray-700 text-lg">
-          <p className="font-semibold">Enjoy your amazing, crowd-free Paris adventure! ✨🇫🇷</p>
-          <p className="text-sm mt-2">Don't forget to share your unique selfies and make unforgettable memories! 📸</p>
-        </div>
-      </div>
-    );
-  };
+  <section id="intro">
+    <h2>Welcome</h2>
+    <p>Welcome to our interactive travel experience! Here, we share exciting adventures, stunning destinations, and insider travel tips to make your journey unforgettable.</p>
+  </section>
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 font-sans text-gray-900 p-4 sm:p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-5xl font-extrabold text-center text-pink-700 mb-10 drop-shadow-lg leading-tight">
-          Your Bespoke Paris Trip Planner! 🗼
-        </h1>
+  <section id="destinations">
+    <h2>Top Destinations</h2>
+    <button class="collapsible">Paris, France</button>
+    <div class="content"><p>Paris dazzles with art, fashion, food, and the Eiffel Tower. Don’t miss a sunset cruise on the Seine.</p></div>
 
-        {/* Tab Navigation */}
-        <div className="flex justify-center mb-8">
-          <button
-            onClick={() => setActiveTab('plan')}
-            className={`px-8 py-3 text-lg font-semibold rounded-l-full transition-all duration-300 shadow-md ${
-              activeTab === 'plan'
-                ? 'bg-pink-600 text-white'
-                : 'bg-white text-pink-600 hover:bg-pink-100'
-            }`}
-          >
-            Plan Your Trip
-          </button>
-          <button
-            onClick={() => setActiveTab('itinerary')}
-            className={`px-8 py-3 text-lg font-semibold rounded-r-full transition-all duration-300 shadow-md ${
-              activeTab === 'itinerary'
-                ? 'bg-pink-600 text-white'
-                : 'bg-white text-pink-600 hover:bg-pink-100'
-            }`}
-          >
-            View Itinerary ({selectedActivities.length})
-          </button>
-        </div>
+    <button class="collapsible">Kyoto, Japan</button>
+    <div class="content"><p>Famous for its temples, geishas, and cherry blossoms, Kyoto is a blend of ancient and modern Japanese culture.</p></div>
 
-        {/* Conditional Rendering of Tabs */}
-        {activeTab === 'plan' ? (
-          <div className="bg-white rounded-3xl shadow-xl p-6 sm:p-10">
-            {activitiesData.map((dayData) => (
-              <DayPlanner
-                key={dayData.day}
-                dayData={dayData}
-                selectedActivities={selectedActivities}
-                onToggle={toggleActivity}
-              />
-            ))}
-          </div>
-        ) : (
-          <ItineraryDisplay selectedActivities={selectedActivities} />
-        )}
-      </div>
-    </div>
-  );
-};
+    <button class="collapsible">Cusco, Peru</button>
+    <div class="content"><p>Gateway to Machu Picchu, Cusco is rich with Incan history and breathtaking landscapes.</p></div>
+  </section>
 
-export default App;
-initial upload
+  <section id="tips">
+    <h2>Travel Tips</h2>
+    <ul>
+      <li>Pack light and smart — focus on essentials.</li>
+      <li>Download offline maps before you go.</li>
+      <li>Learn basic local phrases to enhance your experience.</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 My Travel Adventures | All rights reserved</p>
+  </footer>
+
+  <script>
+    // Collapsible sections logic
+    const coll = document.querySelectorAll(".collapsible");
+    coll.forEach(btn => {
+      btn.addEventListener("click", function () {
+        this.classList.toggle("active");
+        const content = this.nextElementSibling;
+        if (content.style.maxHeight) {
+          content.style.maxHeight = null;
+        } else {
+          content.style.maxHeight = content.scrollHeight + "px";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
